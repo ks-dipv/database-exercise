@@ -10,12 +10,18 @@ export class TimeSeries {
   })
   cName: string;
 
-  @Column()
+  @Column({
+    type: 'int4',
+  })
   confirmed: number;
 
-  @Column()
+  @Column({
+    type: 'int4',
+  })
   deaths: number;
 
-  @Column()
+  @Column({
+    type: 'int4',
+  })
   recovered: number;
 }
