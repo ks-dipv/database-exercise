@@ -4,7 +4,6 @@ import { Country } from '../country.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CountriesListDto } from '../dtos/add-country.dto';
 import { PatchCountryDto } from '../dtos/patch-country.dto';
-import { TimeSeries } from '../../timeseries/timeseries.entity';
 
 @Injectable()
 export class CountryService {
@@ -15,12 +14,6 @@ export class CountryService {
 
     @InjectRepository(Country)
     private readonly countryRepository: Repository<Country>,
-
-    /**
-     * inject timeSeriesRepository
-     */
-    @InjectRepository(TimeSeries)
-    private readonly timeSeriesRepository: Repository<TimeSeries>,
   ) {}
 
   public async addCountry(countryData: CountriesListDto) {
