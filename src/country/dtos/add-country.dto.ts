@@ -2,7 +2,7 @@ import { IsString } from 'class-validator';
 
 export class CountriesListDto {
   @IsString()
-  cname: string;
+  cName: string;
 
   @IsString()
   flag: string;
