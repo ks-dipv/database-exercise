@@ -1,4 +1,12 @@
-import { Body, Controller, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { CountryService } from './services/country.service';
 import { CountriesListDto } from './dtos/add-country.dto';
 import { PatchCountryDto } from './dtos/patch-country.dto';
@@ -20,5 +28,10 @@ export class CountryController {
   @Patch()
   public updateCountry(@Body() updateCountryDto: PatchCountryDto) {
     return this.countryService.updateCountry(updateCountryDto);
+  }
+
+  @Delete()
+  public deleteCountry(@Query('id', ParseIntPipe) id: number) {
+    return this.countryService.deleteCountry(id);
   }
 }

@@ -1,9 +1,10 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Country } from '../country.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CountriesListDto } from '../dtos/add-country.dto';
 import { PatchCountryDto } from '../dtos/patch-country.dto';
+import { TimeSeries } from '../../timeseries/timeseries.entity';
 
 @Injectable()
 export class CountryService {
@@ -14,10 +15,16 @@ export class CountryService {
 
     @InjectRepository(Country)
     private readonly countryRepository: Repository<Country>,
+
+    /**
+     * inject timeSeriesRepository
+     */
+    @InjectRepository(TimeSeries)
+    private readonly timeSeriesRepository: Repository<TimeSeries>,
   ) {}
 
   public async addCountry(countryData: CountriesListDto) {
-    const existingCountry = await this.countryRepository.findOne({
+    await this.countryRepository.findOne({
       where: { code: countryData.code },
     });
 
@@ -38,5 +45,18 @@ export class CountryService {
 
     //save updated country
     return await this.countryRepository.save(existantCountry);
+  }
+
+  public async deleteCountry(id: number): Promise<Country> {
+    const country = await this.countryRepository.findOne({
+      relations: { timeseries: true },
+      where: { id: id },
+    });
+    if (country.timeseries.length > 0) {
+      throw new BadRequestException(
+        'This country is not deleted because, it have timeseries data.',
+      );
+    }
+    return await this.countryRepository.remove(country);
   }
 }
