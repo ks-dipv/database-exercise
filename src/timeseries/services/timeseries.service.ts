@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { TimeSeries } from '../timeseries.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { createTimeseries } from '../dtos/timeseries.dto';
+import { createTimeseries, updateTimeseries } from '../dtos/timeseries.dto';
 
 @Injectable()
 export class TimeseriesService {
@@ -37,6 +37,19 @@ export class TimeseriesService {
     }
     return 'Data is added.';
   }
+
+  public async updateTimeseries(data: updateTimeseries) {
+    const existingData = await this.timeseriesRepository.findOne({
+      where: { name: data.name, date: data.date },
+    });
+    if (!existingData)
+      throw new BadRequestException(
+        'Data is not available for given date and country.',
+      );
+    Object.assign(existingData, data);
+    return await this.timeseriesRepository.save(existingData);
+  }
+
   private validDate(date: string) {
     const time = new Date(date).getTime();
     const date_ = new Date(date).getDate();
