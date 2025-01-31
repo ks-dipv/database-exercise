@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CountryModule } from './country/country.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TimeseriesModule } from './timeseries/timeseries.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         database: 'country',
       }),
     }),
+    TimeseriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

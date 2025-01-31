@@ -1,9 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Country } from 'src/country/country.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class TimeSeries {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  date: Date;
 
   @Column({
     type: 'varchar',
@@ -24,4 +28,7 @@ export class TimeSeries {
     type: 'int4',
   })
   recovered: number;
+
+  @ManyToOne(() => Country, (country) => country.timeseries)
+  country: Country;
 }

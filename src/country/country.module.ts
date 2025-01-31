@@ -3,7 +3,7 @@ import { CountryController } from './country.controller';
 import { CountryService } from './services/country.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Country } from './country.entity';
-import { TimeSeries } from './timeseries.entity';
+import { TimeSeries } from '../timeseries/timeseries.entity';
 
 @Module({
   controllers: [CountryController],

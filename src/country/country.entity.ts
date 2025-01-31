@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { TimeSeries } from 'src/timeseries/timeseries.entity';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 
 @Entity()
 @Unique(['code'])
@@ -20,4 +27,7 @@ export class Country {
     type: 'varchar',
   })
   code: string;
+
+  @OneToMany(() => TimeSeries, (time) => time.country)
+  timeseries: TimeSeries[];
 }
