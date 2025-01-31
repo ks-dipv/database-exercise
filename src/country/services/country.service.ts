@@ -59,4 +59,11 @@ export class CountryService {
     }
     return await this.countryRepository.remove(country);
   }
+
+  public async getCountry(id: number) {
+    return await this.countryRepository.findOne({
+      relations: { timeseries: true },
+      where: { id: id },
+    });
+  }
 }

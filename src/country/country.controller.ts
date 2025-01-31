@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
+  Param,
   ParseIntPipe,
   Patch,
   Post,
@@ -33,5 +35,10 @@ export class CountryController {
   @Delete()
   public deleteCountry(@Query('id', ParseIntPipe) id: number) {
     return this.countryService.deleteCountry(id);
+  }
+
+  @Get(':id')
+  public getCountry(@Param('id', ParseIntPipe) id: number) {
+    return this.countryService.getCountry(id);
   }
 }
