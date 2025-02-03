@@ -37,6 +37,6 @@ export class TimeSeries {
   recovered: number;
 
   @ManyToOne(() => Country, (country) => country.timeseries)
-  @JoinColumn({ name: 'name', referencedColumnName: 'cName' })
+  @JoinColumn({ name: 'country', referencedColumnName: 'cName' })
   country: Country;
 }
