@@ -2,11 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { TimeSeries } from '../timeseries.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  createTimeseries,
-  deleteTimeseries,
-  updateTimeseries,
-} from '../dtos/timeseries.dto';
+import { createTimeseries, updateTimeseries } from '../dtos/timeseries.dto';
 
 @Injectable()
 export class TimeseriesService {
@@ -52,23 +48,6 @@ export class TimeseriesService {
       );
     Object.assign(existingData, data);
     return await this.timeseriesRepository.save(existingData);
-  }
-
-  public async deleteTimeseries(data: deleteTimeseries) {
-    this.validDate(data.from);
-    this.validDate(data.to);
-    const fromDate = new Date(data.from).getTime();
-    const toDate = new Date(data.to).getTime();
-    const countryData = await this.timeseriesRepository.find({
-      where: { name: data.name },
-    });
-    const filterData = await countryData.filter((data) => {
-      const date = new Date(data.date).getTime() ?? null;
-      if (fromDate <= date && date <= toDate) return data;
-    });
-    const ids = filterData.map((data) => data.id);
-    await this.timeseriesRepository.delete(ids);
-    return 'Data is deleted.';
   }
 
   private validDate(date: string) {
