@@ -1,6 +1,11 @@
 import { Country } from 'src/country/country.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 @Entity()
 export class TimeSeries {
   @PrimaryGeneratedColumn()
@@ -32,6 +37,6 @@ export class TimeSeries {
   recovered: number;
 
   @ManyToOne(() => Country, (country) => country.timeseries)
-  @JoinColumn({ name: "name", referencedColumnName: "cName"})
+  @JoinColumn({ name: 'name', referencedColumnName: 'cName' })
   country: Country;
 }

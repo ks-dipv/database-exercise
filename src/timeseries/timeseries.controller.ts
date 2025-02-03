@@ -2,12 +2,17 @@ import {
   Body,
   Controller,
   Post,
+  Delete,
   Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { TimeseriesService } from './services/timeseries.service';
-import { createTimeseries, updateTimeseries } from './dtos/timeseries.dto';
+import {
+  createTimeseries,
+  updateTimeseries,
+  deleteTimeseries,
+} from './dtos/timeseries.dto';
 
 @Controller('timeseries')
 export class TimeseriesController {
@@ -28,5 +33,11 @@ export class TimeseriesController {
   @UsePipes(new ValidationPipe())
   async updateTimeseries(@Body() data: updateTimeseries) {
     return await this.timeseriesService.updateTimeseries(data);
+  }
+
+  @Delete()
+  @UsePipes(new ValidationPipe())
+  async deleteTime(@Body() data: deleteTimeseries) {
+    return await this.timeseriesService.deleteTimeseries(data);
   }
 }
