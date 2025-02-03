@@ -7,6 +7,7 @@ import { TimeseriesModule } from './timeseries/timeseries.module';
 import { CountrylistModule } from './covid-data/countrylist/countrylist.module';
 import { CcasesModule } from './covid-data/ccases/ccases.module';
 import { CwisecasesModule } from './covid-data/cwisecases/cwisecases.module';
+import { MwisecasesModule } from './covid-data/mwisecases/mwisecases.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { CwisecasesModule } from './covid-data/cwisecases/cwisecases.module';
     CountrylistModule,
     CcasesModule,
     CwisecasesModule,
+    MwisecasesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
