@@ -5,6 +5,7 @@ import { CountryModule } from './country/country.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TimeseriesModule } from './timeseries/timeseries.module';
 import { CountrylistModule } from './covid-data/countrylist/countrylist.module';
+import { CcasesModule } from './covid-data/ccases/ccases.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CountrylistModule } from './covid-data/countrylist/countrylist.module';
     }),
     TimeseriesModule,
     CountrylistModule,
+    CcasesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
