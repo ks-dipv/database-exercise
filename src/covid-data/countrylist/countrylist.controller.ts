@@ -4,7 +4,7 @@ import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CountrylistService } from './services/countrylist.service';
 
 @Controller('countrylist')
-@ApiTags('Countries')
+@ApiTags('Countries List')
 export class CountrylistController {
   constructor(private readonly countriesService: CountrylistService) {}
 

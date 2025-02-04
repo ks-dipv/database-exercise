@@ -1,9 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Country } from '../country.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CountriesListDto } from '../dtos/add-country.dto';
-import { PatchCountryDto } from '../dtos/patch-country.dto';
+import { createCountry, updateCountry } from '../dtos/add-country.dto';
 
 @Injectable()
 export class CountryService {
@@ -16,7 +19,7 @@ export class CountryService {
     private readonly countryRepository: Repository<Country>,
   ) {}
 
-  public async addCountry(countryData: CountriesListDto) {
+  public async addCountry(countryData: createCountry) {
     await this.countryRepository.findOne({
       where: { code: countryData.code },
     });
@@ -25,7 +28,7 @@ export class CountryService {
     return await this.countryRepository.save(newCountry);
   }
 
-  public async updateCountry(updateCountryDataDto: PatchCountryDto) {
+  public async updateCountry(updateCountryDataDto: updateCountry) {
     //find the country
     const existantCountry = await this.countryRepository.findOneBy({
       id: updateCountryDataDto.id,
@@ -54,9 +57,15 @@ export class CountryService {
   }
 
   public async getCountry(id: number) {
-    return await this.countryRepository.findOne({
+    const country = await this.countryRepository.findOne({
+      where: { id: id },
+    });
+
+    if (!country) throw new NotFoundException('Coutnry is not found.');
+    const data = await this.countryRepository.findOne({
       relations: { timeseries: true },
       where: { id: id },
     });
+    return data;
   }
 }
