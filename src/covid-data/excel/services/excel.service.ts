@@ -32,7 +32,7 @@ export class ExcelService {
 
     worksheet.columns = [
       { header: 'Country', key: 'country', width: 30 },
-      { header: 'Month-Year', key: 'monthYear', width: 15 },
+      { header: 'Year-Month', key: 'monthYear', width: 15 },
       { header: 'Total Confirmed', key: 'confirmed', width: 20 },
       { header: 'Total Deaths', key: 'deaths', width: 20 },
       { header: 'Total Recovered', key: 'recovered', width: 20 },

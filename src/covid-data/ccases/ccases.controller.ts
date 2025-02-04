@@ -35,7 +35,7 @@ export class CcasesController {
     type: 'string',
     required: false,
     description: 'return country based on the code given in query',
-    example: 'In',
+    example: 'IN',
   })
   public getCases(@Query() getCases: GetCasesDto) {
     const { fromDate, toDate, countryCode } = getCases;
