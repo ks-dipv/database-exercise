@@ -46,7 +46,7 @@ export class CcasesService {
     if (countryCode) {
       const country = await this.countryRepo.findOne({
         where: {
-          code: countryCode,
+          code: countryCode.toUpperCase(),
         },
       });
 
