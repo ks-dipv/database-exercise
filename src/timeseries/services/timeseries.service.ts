@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
   RequestTimeoutException,
 } from '@nestjs/common';
 import { TimeSeries } from '../timeseries.entity';
@@ -94,43 +95,55 @@ export class TimeseriesService {
   }
 
   public async updateTimeseries(data: updateTimeseries) {
-    const existingData = await this.timeseriesRepository.findOne({
-      where: { name: data.name, date: data.date },
-    });
-    if (!existingData)
-      throw new BadRequestException(
+    try {
+      const existingData = await this.timeseriesRepository.findOne({
+        where: { name: data.name, date: data.date },
+      });
+      Object.assign(existingData, data);
+      return await this.timeseriesRepository.save(existingData);
+    } catch (error) {
+      throw new NotFoundException(
         'Data is not available for given date and country.',
       );
-    Object.assign(existingData, data);
-    return await this.timeseriesRepository.save(existingData);
+    }
   }
 
   public async deleteTimeseries(data: deleteTimeseries) {
-    this.validDate(data.from);
-    this.validDate(data.to);
-    const fromDate = new Date(data.from).getTime();
-    const toDate = new Date(data.to).getTime();
-    const countryData = await this.timeseriesRepository.find({
-      where: { name: data.name },
-    });
-    const filterData = await countryData.filter((data) => {
-      const date = new Date(data.date).getTime() ?? null;
-      if (fromDate <= date && date <= toDate) return data;
-    });
-    const ids = filterData.map((data) => data.id);
-    await this.timeseriesRepository.delete(ids);
-    return 'Data is deleted.';
+    try {
+      this.validDate(data.from);
+      this.validDate(data.to);
+      const fromDate = new Date(data.from).getTime();
+      const toDate = new Date(data.to).getTime();
+      const countryData = await this.timeseriesRepository.find({
+        where: { name: data.name },
+      });
+      const filterData = await countryData.filter((data) => {
+        const date = new Date(data.date).getTime() ?? null;
+        if (fromDate <= date && date <= toDate) return data;
+      });
+      const ids = filterData.map((data) => data.id);
+      await this.timeseriesRepository.delete(ids);
+      return 'Data is deleted.';
+    } catch (error) {
+      throw new NotFoundException(
+        'data is not available for this country or given date range',
+      );
+    }
   }
 
   public async getTimeseries(timeseriesQuery: PaginationQueryDto) {
-    const timeseries = await this.paginationProvider.paginateQuery(
-      {
-        limit: timeseriesQuery.limit,
-        page: timeseriesQuery.page,
-      },
-      this.timeseriesRepository,
-    );
-    return timeseries;
+    try {
+      const timeseries = await this.paginationProvider.paginateQuery(
+        {
+          limit: timeseriesQuery.limit,
+          page: timeseriesQuery.page,
+        },
+        this.timeseriesRepository,
+      );
+      return timeseries;
+    } catch (error) {
+      throw new NotFoundException('Data is not available');
+    }
   }
 
   private validDate(date: string) {

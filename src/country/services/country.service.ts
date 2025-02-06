@@ -78,54 +78,73 @@ export class CountryService {
   }
 
   public async updateCountry(updateCountryDataDto: updateCountry) {
+    try {
+      const existantCountry = await this.countryRepository.findOneBy({
+        id: updateCountryDataDto.id,
+      });
+
+      //update country
+      existantCountry.cName =
+        updateCountryDataDto.cName ?? existantCountry.cName;
+      existantCountry.code = updateCountryDataDto.code ?? existantCountry.code;
+      existantCountry.flag = updateCountryDataDto.flag ?? existantCountry.flag;
+
+      //save updated country
+      return await this.countryRepository.save(existantCountry);
+    } catch (error) {
+      throw new NotFoundException(
+        'Country with given ID is not found in Database.',
+      );
+    }
     //find the country
-    const existantCountry = await this.countryRepository.findOneBy({
-      id: updateCountryDataDto.id,
-    });
-
-    //update country
-    existantCountry.cName = updateCountryDataDto.cName ?? existantCountry.cName;
-    existantCountry.code = updateCountryDataDto.code ?? existantCountry.code;
-    existantCountry.flag = updateCountryDataDto.flag ?? existantCountry.flag;
-
-    //save updated country
-    return await this.countryRepository.save(existantCountry);
   }
 
   public async deleteCountry(id: number): Promise<Country> {
-    const country = await this.countryRepository.findOne({
-      relations: { timeseries: true },
-      where: { id: id },
-    });
-    if (country.timeseries.length > 0) {
-      throw new BadRequestException(
-        'This country is not deleted because, it have timeseries data.',
-      );
+    try {
+      const country = await this.countryRepository.findOne({
+        relations: { timeseries: true },
+        where: { id: id },
+      });
+
+      if (country.timeseries.length > 0) {
+        throw new BadRequestException(
+          'This country is not deleted because, it have timeseries data.',
+        );
+      }
+      return await this.countryRepository.remove(country);
+    } catch (error) {
+      throw new NotFoundException('Country with given ID od not found.');
     }
-    return await this.countryRepository.remove(country);
   }
 
   public async getCountry(id: number) {
-    const country = await this.countryRepository.findOne({
-      where: { id: id },
-    });
+    try {
+      const country = await this.countryRepository.findOne({
+        where: { id: id },
+      });
 
-    if (!country) throw new NotFoundException('Coutnry is not found.');
-    const data = await this.countryRepository.findOne({
-      relations: { timeseries: true },
-      where: { id: id },
-    });
-    return data;
+      const data = await this.countryRepository.findOne({
+        relations: { timeseries: true },
+        where: { id: id },
+      });
+      return data;
+    } catch (error) {
+      throw new NotFoundException('Coutnry is not found.');
+    }
   }
 
   public async getAllCountry(countryQuery: PaginationQueryDto) {
-    const country = await this.paginationProvider.paginateQuery(
-      {
-        limit: countryQuery.limit,
-        page: countryQuery.page,
-      },
-      this.countryRepository,
-    );
-    return country;
+    try {
+      const country = await this.paginationProvider.paginateQuery(
+        {
+          limit: countryQuery.limit,
+          page: countryQuery.page,
+        },
+        this.countryRepository,
+      );
+      return country;
+    } catch (error) {
+      throw new NotFoundException('Data is not available');
+    }
   }
 }
