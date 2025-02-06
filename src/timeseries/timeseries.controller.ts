@@ -6,6 +6,8 @@ import {
   Put,
   UsePipes,
   ValidationPipe,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { TimeseriesService } from './services/timeseries.service';
 import {
@@ -14,6 +16,7 @@ import {
   deleteTimeseries,
 } from './dtos/timeseries.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
 
 @Controller('timeseries')
 @ApiTags('Timeseries')
@@ -62,5 +65,17 @@ export class TimeseriesController {
   @UsePipes(new ValidationPipe())
   async deleteTime(@Body() data: deleteTimeseries) {
     return await this.timeseriesService.deleteTimeseries(data);
+  }
+
+  @Get()
+  @ApiOperation({
+    summary: 'get all timeseries data',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfuly get timeseries data',
+  })
+  async getTimeseries(@Query() timeseriesQuery: PaginationQueryDto) {
+    return await this.timeseriesService.getTimeseries(timeseriesQuery);
   }
 }

@@ -10,6 +10,7 @@ import { CwisecasesModule } from './covid-data/cwisecases/cwisecases.module';
 import { MwisecasesModule } from './covid-data/mwisecases/mwisecases.module';
 import { TopcasesModule } from './covid-data/topcases/topcases.module';
 import { ExcelModule } from './covid-data/excel/excel.module';
+import { PaginationModule } from './pagination/pagination.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ExcelModule } from './covid-data/excel/excel.module';
     MwisecasesModule,
     TopcasesModule,
     ExcelModule,
+    PaginationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

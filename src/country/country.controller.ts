@@ -12,6 +12,7 @@ import {
 import { CountryService } from './services/country.service';
 import { createCountry, updateCountry } from './dtos/add-country.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
 
 @Controller('country')
 @ApiTags('Countries')
@@ -69,5 +70,17 @@ export class CountryController {
   })
   public getCountry(@Param('id', ParseIntPipe) id: number) {
     return this.countryService.getCountry(id);
+  }
+
+  @Get()
+  @ApiOperation({
+    summary: 'get all country',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfuly get country data',
+  })
+  public grtAllCountry(@Query() countryQuery: PaginationQueryDto) {
+    return this.countryService.getAllCountry(countryQuery);
   }
 }
