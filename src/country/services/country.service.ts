@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import { Country } from '../country.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createCountry, updateCountry } from '../dtos/add-country.dto';
+import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
+import { PaginationProvider } from 'src/pagination/providers/pagination.provider';
 
 @Injectable()
 export class CountryService {
@@ -17,6 +19,11 @@ export class CountryService {
 
     @InjectRepository(Country)
     private readonly countryRepository: Repository<Country>,
+
+    /**
+     * injecting pagination provider
+     */
+    private readonly paginationProvider: PaginationProvider,
   ) {}
 
   public async addCountry(countryData: createCountry) {
@@ -67,5 +74,16 @@ export class CountryService {
       where: { id: id },
     });
     return data;
+  }
+
+  public async getAllCountry(countryQuery: PaginationQueryDto) {
+    const country = await this.paginationProvider.paginateQuery(
+      {
+        limit: countryQuery.limit,
+        page: countryQuery.page,
+      },
+      this.countryRepository,
+    );
+    return country;
   }
 }

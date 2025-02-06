@@ -7,6 +7,8 @@ import {
   updateTimeseries,
   deleteTimeseries,
 } from '../dtos/timeseries.dto';
+import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
+import { PaginationProvider } from 'src/pagination/providers/pagination.provider';
 
 @Injectable()
 export class TimeseriesService {
@@ -17,6 +19,11 @@ export class TimeseriesService {
 
     @InjectRepository(TimeSeries)
     private readonly timeseriesRepository: Repository<TimeSeries>,
+
+    /**
+     * injecting pagination provider
+     */
+    private readonly paginationProvider: PaginationProvider,
   ) {}
 
   public async createTimeseries(data: createTimeseries) {
@@ -69,6 +76,17 @@ export class TimeseriesService {
     const ids = filterData.map((data) => data.id);
     await this.timeseriesRepository.delete(ids);
     return 'Data is deleted.';
+  }
+
+  public async getTimeseries(timeseriesQuery: PaginationQueryDto) {
+    const timeseries = await this.paginationProvider.paginateQuery(
+      {
+        limit: timeseriesQuery.limit,
+        page: timeseriesQuery.page,
+      },
+      this.timeseriesRepository,
+    );
+    return timeseries;
   }
 
   private validDate(date: string) {
