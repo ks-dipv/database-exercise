@@ -1,9 +1,11 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
+  RequestTimeoutException,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Country } from '../country.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createCountry, updateCountry } from '../dtos/add-country.dto';
@@ -24,15 +26,55 @@ export class CountryService {
      * injecting pagination provider
      */
     private readonly paginationProvider: PaginationProvider,
+
+    /**
+     * Inject Datasource
+     */
+    private readonly dataSource: DataSource,
   ) {}
 
   public async addCountry(countryData: createCountry) {
-    await this.countryRepository.findOne({
-      where: { code: countryData.code },
-    });
+    //crate Query runner Instance
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    const newCountry = await this.countryRepository.create(countryData);
-    return await this.countryRepository.save(newCountry);
+    try {
+      //Connect Query Runner to datasource
+      await queryRunner.connect();
+
+      // Start Transaction
+      await queryRunner.startTransaction();
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Could not connect to the database',
+        error,
+      );
+    }
+
+    try {
+      await this.countryRepository.findOne({
+        where: { code: countryData.code },
+      });
+
+      const newCountry = await queryRunner.manager.create(Country, countryData);
+      return await queryRunner.manager.save(newCountry);
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new ConflictException(
+        'Data is already available for given Country and ISO code',
+        {
+          description: String(error),
+        },
+      );
+    } finally {
+      try {
+        // Release connection
+        await queryRunner.release();
+      } catch (error) {
+        throw new RequestTimeoutException('Could not release the connection', {
+          description: String(error),
+        });
+      }
+    }
   }
 
   public async updateCountry(updateCountryDataDto: updateCountry) {
