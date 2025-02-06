@@ -1,6 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { TimeSeries } from '../timeseries.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   createTimeseries,
@@ -24,29 +29,68 @@ export class TimeseriesService {
      * injecting pagination provider
      */
     private readonly paginationProvider: PaginationProvider,
+
+    /**
+     * Inject Datasource
+     */
+    private readonly dataSource: DataSource,
   ) {}
 
   public async createTimeseries(data: createTimeseries) {
-    for (let i = 0; i < data.data.length; i++) {
-      const existingData = await this.timeseriesRepository.findOne({
-        where: { date: data.data[i].date, name: data.name },
-      });
-      if (existingData)
-        throw new BadRequestException(
-          'Data is already available for given Date and Country',
-        );
-      this.validDate(data.data[i].date);
-      const timeData = {
-        name: data.name,
-        date: data.data[i].date,
-        confirmed: data.data[i].confirmed,
-        deaths: data.data[i].deaths,
-        recovered: data.data[i].recovered,
-      };
-      const newData = await this.timeseriesRepository.create(timeData);
-      await this.timeseriesRepository.save(newData);
+    //crate Query runner Instance
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    try {
+      //Connect Query Runner to datasource
+      await queryRunner.connect();
+
+      // Start Transaction
+      await queryRunner.startTransaction();
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Could not connect to the database',
+        error,
+      );
     }
-    return 'Data is added.';
+
+    try {
+      for (let i = 0; i < data.data.length; i++) {
+        const existingData = await this.timeseriesRepository.findOne({
+          where: { date: data.data[i].date, name: data.name },
+        });
+
+        if (existingData)
+          throw new BadRequestException(
+            'Data is already available for given Date and Country',
+          );
+
+        this.validDate(data.data[i].date);
+        const timeData = {
+          name: data.name,
+          date: data.data[i].date,
+          confirmed: data.data[i].confirmed,
+          deaths: data.data[i].deaths,
+          recovered: data.data[i].recovered,
+        };
+        const newData = await queryRunner.manager.create(TimeSeries, timeData);
+        await queryRunner.manager.save(newData);
+      }
+      return 'Data is Added';
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new ConflictException('Could not complete the transaction', {
+        description: String(error),
+      });
+    } finally {
+      try {
+        // Release connection
+        await queryRunner.release();
+      } catch (error) {
+        throw new RequestTimeoutException('Could not release the connection', {
+          description: String(error),
+        });
+      }
+    }
   }
 
   public async updateTimeseries(data: updateTimeseries) {
