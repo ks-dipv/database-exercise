@@ -13,6 +13,7 @@ import { ExcelModule } from './covid-data/excel/excel.module';
 import { PaginationModule } from './pagination/pagination.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import environmentValidation from './config/environment.validation';
@@ -52,6 +53,7 @@ const ENV = process.env.NODE_ENV;
     ExcelModule,
     PaginationModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
