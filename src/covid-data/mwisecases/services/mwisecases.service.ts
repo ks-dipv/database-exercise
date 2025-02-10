@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TimeSeries } from 'src/timeseries/timeseries.entity';
+import { TimeSeries } from '../../../timeseries/timeseries.entity';
 import { Repository } from 'typeorm';
 import { parse, format } from 'date-fns';
 

@@ -13,8 +13,8 @@ import {
   updateTimeseries,
   deleteTimeseries,
 } from '../dtos/timeseries.dto';
-import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
-import { PaginationProvider } from 'src/pagination/providers/pagination.provider';
+import { PaginationQueryDto } from '../../pagination/dtos/pagination-query.dto';
+import { PaginationProvider } from '../../pagination/providers/pagination.provider';
 
 @Injectable()
 export class TimeseriesService {

@@ -4,7 +4,7 @@ import { CountryService } from './services/country.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Country } from './country.entity';
 import { TimeSeries } from '../timeseries/timeseries.entity';
-import { PaginationModule } from 'src/pagination/pagination.module';
+import { PaginationModule } from '../pagination/pagination.module';
 
 @Module({
   controllers: [CountryController],

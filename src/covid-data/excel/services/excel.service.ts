@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TimeSeries } from 'src/timeseries/timeseries.entity';
+import { TimeSeries } from '../../../timeseries/timeseries.entity';
 import { Repository } from 'typeorm';
 import { Workbook } from 'exceljs';
-import { Country } from 'src/country/country.entity';
+import { Country } from '../../../country/country.entity';
 
 @Injectable()
 export class ExcelService {

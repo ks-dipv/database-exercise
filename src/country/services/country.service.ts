@@ -9,8 +9,8 @@ import { DataSource, Repository } from 'typeorm';
 import { Country } from '../country.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createCountry, updateCountry } from '../dtos/add-country.dto';
-import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
-import { PaginationProvider } from 'src/pagination/providers/pagination.provider';
+import { PaginationQueryDto } from '../../pagination/dtos/pagination-query.dto';
+import { PaginationProvider } from '../../pagination/providers/pagination.provider';
 
 @Injectable()
 export class CountryService {

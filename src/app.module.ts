@@ -11,20 +11,36 @@ import { MwisecasesModule } from './covid-data/mwisecases/mwisecases.module';
 import { TopcasesModule } from './covid-data/topcases/topcases.module';
 import { ExcelModule } from './covid-data/excel/excel.module';
 import { PaginationModule } from './pagination/pagination.module';
+import { UsersModule } from './users/users.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import appConfig from './config/app.config';
+import databaseConfig from './config/database.config';
+import environmentValidation from './config/environment.validation';
+
+const ENV = process.env.NODE_ENV;
 
 @Module({
   imports: [
     CountryModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      // envFilePath: ['.env.development'],
+      envFilePath: !ENV ? '.env' : `.env.${ENV}`,
+      load: [appConfig, databaseConfig],
+      validationSchema: environmentValidation,
+    }),
     TypeOrmModule.forRootAsync({
-      useFactory: () => ({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: 'localhost',
-        autoLoadEntities: true,
-        synchronize: true,
-        port: 5432,
-        username: 'user',
-        password: 'password',
-        database: 'country',
+        autoLoadEntities: configService.get('database.autoLoadEntities'),
+        synchronize: configService.get('database.synchronize'),
+        port: +configService.get('database.port'),
+        username: configService.get('database.user'),
+        password: configService.get('database.password'),
+        host: configService.get('database.host'),
+        database: configService.get('database.name'),
       }),
     }),
     TimeseriesModule,
@@ -35,6 +51,7 @@ import { PaginationModule } from './pagination/pagination.module';
     TopcasesModule,
     ExcelModule,
     PaginationModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

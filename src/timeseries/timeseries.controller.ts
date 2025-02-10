@@ -16,7 +16,7 @@ import {
   deleteTimeseries,
 } from './dtos/timeseries.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
+import { PaginationQueryDto } from '../pagination/dtos/pagination-query.dto';
 
 @Controller('timeseries')
 @ApiTags('Timeseries')

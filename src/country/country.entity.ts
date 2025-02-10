@@ -1,4 +1,4 @@
-import { TimeSeries } from 'src/timeseries/timeseries.entity';
+import { TimeSeries } from '../timeseries/timeseries.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
