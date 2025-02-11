@@ -28,6 +28,13 @@ export class UsersController {
 
   @Post()
   @Auth(AuthType.None)
+  @ApiOperation({
+    summary: 'Create a user',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Users created successfully',
+  })
   public createUsers(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createUser(createUserDto);
   }
