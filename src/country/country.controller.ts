@@ -13,6 +13,8 @@ import { CountryService } from './services/country.service';
 import { createCountry, updateCountry } from './dtos/add-country.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PaginationQueryDto } from '../pagination/dtos/pagination-query.dto';
+import { Auth } from 'src/auth/decorator/auth.decorator';
+import { AuthType } from 'src/auth/enums/auth-type.enum';
 
 @Controller('country')
 @ApiTags('Countries')
@@ -68,6 +70,7 @@ export class CountryController {
     status: 200,
     description: 'Successfuly get country data for specific id',
   })
+  @Auth(AuthType.None)
   public getCountry(@Param('id', ParseIntPipe) id: number) {
     return this.countryService.getCountry(id);
   }
@@ -80,6 +83,7 @@ export class CountryController {
     status: 200,
     description: 'Successfuly get country data',
   })
+  @Auth(AuthType.None)
   public grtAllCountry(@Query() countryQuery: PaginationQueryDto) {
     return this.countryService.getAllCountry(countryQuery);
   }

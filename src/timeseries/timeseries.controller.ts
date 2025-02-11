@@ -17,6 +17,8 @@ import {
 } from './dtos/timeseries.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PaginationQueryDto } from '../pagination/dtos/pagination-query.dto';
+import { AuthType } from 'src/auth/enums/auth-type.enum';
+import { Auth } from 'src/auth/decorator/auth.decorator';
 
 @Controller('timeseries')
 @ApiTags('Timeseries')
@@ -75,6 +77,7 @@ export class TimeseriesController {
     status: 200,
     description: 'Successfuly get timeseries data',
   })
+  @Auth(AuthType.None)
   async getTimeseries(@Query() timeseriesQuery: PaginationQueryDto) {
     return await this.timeseriesService.getTimeseries(timeseriesQuery);
   }
