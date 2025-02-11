@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { CcasesController } from './ccases.controller';
 import { CcasesService } from './services/ccases.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Country } from 'src/country/country.entity';
-import { TimeSeries } from 'src/timeseries/timeseries.entity';
+import { Country } from '../../country/country.entity';
+import { TimeSeries } from '../../timeseries/timeseries.entity';
 
 @Module({
   controllers: [CcasesController],
